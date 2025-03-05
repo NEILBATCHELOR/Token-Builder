@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { Card } from "./ui/card";
 import { Button } from "./ui/button";
 import { Plus, AlertCircle } from "lucide-react";
@@ -17,6 +17,7 @@ import ImportButton from "./ImportButton";
 interface TokenConfigurationFormProps {
   onSubmit?: (data: TokenFormData) => void;
   initialData?: TokenFormData;
+  onChange?: (data: TokenFormData) => void;
 }
 
 const TokenConfigurationForm = ({
@@ -28,6 +29,7 @@ const TokenConfigurationForm = ({
     standard: "ERC20",
     metadata: {},
   },
+  onChange = () => {},
 }: TokenConfigurationFormProps) => {
   const defaultValues: TokenFormValues = {
     ...initialData,
@@ -64,6 +66,33 @@ const TokenConfigurationForm = ({
   } = methods;
 
   const formData = watch();
+
+  // Update parent component with form data changes
+  useEffect(() => {
+    // Generate contract preview for each block
+    const updatedBlocks =
+      formData.blocks?.map((block) => {
+        try {
+          const { generateContract } = require("@/lib/contractTemplates");
+          return {
+            ...block,
+            contractPreview: generateContract(block),
+          };
+        } catch (error) {
+          console.error("Error generating contract:", error);
+          return block;
+        }
+      }) || [];
+
+    // Update the form data with contract previews
+    const updatedFormData = {
+      ...formData,
+      blocks: updatedBlocks,
+      contractPreview: updatedBlocks[0]?.contractPreview || "",
+    };
+
+    onChange(updatedFormData);
+  }, [formData, onChange]);
 
   const handleBasicDetailsChange = (field: keyof TokenFormData, value: any) => {
     setValue(field, value, { shouldValidate: true });

@@ -17,6 +17,19 @@ import TokenStandardGuide from "./TokenStandardGuide";
 import TokenPreviewPanel from "./TokenPreviewPanel";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Progress } from "@/components/ui/progress";
+import { Button } from "./ui/button";
+import { Link } from "react-router-dom";
+import { Label } from "./ui/label";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "./ui/select";
+import MetadataEditor from "./MetadataEditor";
+import ContractPreview from "./ContractPreview";
+import { TransactionHistory } from "./TransactionHistory";
 
 interface HomeProps {
   onConfigurationComplete?: (data: any) => void;
@@ -204,6 +217,7 @@ const Home = ({ onConfigurationComplete = () => {} }: HomeProps) => {
         <Sidebar
           activeSection={activeSection}
           onSectionChange={setActiveSection}
+          tokenStatus={tokenData?.status}
         />
         <div className="flex-1 p-6">
           <div className="mb-6 space-y-4">
@@ -240,8 +254,8 @@ const Home = ({ onConfigurationComplete = () => {} }: HomeProps) => {
               <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary"></div>
             </div>
           ) : (
-            <div className="grid grid-cols-3 gap-6">
-              <div className="col-span-2">
+            <div className="w-full">
+              {activeSection === "token-blocks" && (
                 <Tabs defaultValue="form" className="w-full">
                   <TabsList className="grid w-full grid-cols-2">
                     <TabsTrigger value="form">Configuration</TabsTrigger>
@@ -267,32 +281,82 @@ const Home = ({ onConfigurationComplete = () => {} }: HomeProps) => {
                           status: "DRAFT",
                         }
                       }
+                      onChange={setTokenData}
                     />
                   </TabsContent>
                   <TabsContent value="guide" className="mt-4">
                     <TokenStandardGuide />
                   </TabsContent>
                 </Tabs>
-              </div>
-              <div className="col-span-1">
-                <TokenPreviewPanel
-                  tokenDetails={
-                    tokenData || {
-                      name: "Example Token",
-                      symbol: "EXT",
-                      decimals: 18,
-                      standard: "ERC20",
-                      metadata: {
-                        description: "An example token for demonstration",
-                        properties: {
-                          canTransfer: true,
-                          isMintable: true,
-                        },
-                      },
-                    }
-                  }
-                />
-              </div>
+              )}
+
+              {activeSection === "contract" && (
+                <div className="w-full">
+                  <div className="bg-white p-6 rounded-lg border">
+                    <h2 className="text-2xl font-semibold mb-4">
+                      Smart Contract
+                    </h2>
+                    <p className="text-muted-foreground mb-6">
+                      Review and customize your token's smart contract.
+                    </p>
+                    <div className="flex justify-between mt-6">
+                      <Button
+                        variant="outline"
+                        onClick={() => setActiveSection("token-blocks")}
+                      >
+                        Previous: Token Blocks
+                      </Button>
+                      <Button onClick={() => setActiveSection("history")}>
+                        Next: History
+                      </Button>
+                    </div>
+                  </div>
+                  <div className="mt-6">
+                    <TokenPreviewPanel
+                      tokenDetails={
+                        tokenData || {
+                          name: "Example Token",
+                          symbol: "EXT",
+                          decimals: 18,
+                          standard: "ERC20",
+                          metadata: {
+                            description: "An example token for demonstration",
+                            properties: {
+                              canTransfer: true,
+                              isMintable: true,
+                            },
+                          },
+                        }
+                      }
+                    />
+                  </div>
+                </div>
+              )}
+
+              {activeSection === "history" && (
+                <div className="bg-white p-6 rounded-lg border">
+                  <h2 className="text-2xl font-semibold mb-4">
+                    Transaction History
+                  </h2>
+                  <p className="text-muted-foreground mb-6">
+                    View transaction history and configuration changes.
+                  </p>
+                  <div className="space-y-4">
+                    <TransactionHistory />
+                  </div>
+                  <div className="flex justify-between mt-6">
+                    <Button
+                      variant="outline"
+                      onClick={() => setActiveSection("contract")}
+                    >
+                      Previous: Contract
+                    </Button>
+                    <Button onClick={handleTokenSubmit}>
+                      Save All Changes
+                    </Button>
+                  </div>
+                </div>
+              )}
             </div>
           )}
         </div>

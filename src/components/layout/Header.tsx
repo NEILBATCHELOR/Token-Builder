@@ -1,6 +1,7 @@
 import { ThemeToggle } from "@/components/ui/theme-toggle";
 import { Button } from "@/components/ui/button";
 import { HelpCircle, Settings } from "lucide-react";
+import { Link } from "react-router-dom";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -16,10 +17,6 @@ export function Header() {
           <div className="font-bold text-xl">Token Builder</div>
         </div>
         <div className="flex items-center gap-2">
-          <Button variant="ghost" size="icon">
-            <HelpCircle className="h-5 w-5" />
-            <span className="sr-only">Help</span>
-          </Button>
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
               <Button variant="ghost" size="icon">
@@ -28,11 +25,11 @@ export function Header() {
               </Button>
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end">
-              <DropdownMenuItem>Account Settings</DropdownMenuItem>
-              <DropdownMenuItem>Preferences</DropdownMenuItem>
+              <DropdownMenuItem asChild>
+                <Link to="/admin">Token Administration</Link>
+              </DropdownMenuItem>
             </DropdownMenuContent>
           </DropdownMenu>
-          <ThemeToggle />
         </div>
       </div>
     </header>
