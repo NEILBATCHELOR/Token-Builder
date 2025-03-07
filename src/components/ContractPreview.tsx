@@ -2,7 +2,7 @@ import { Card } from "./ui/card";
 import { ScrollArea } from "./ui/scroll-area";
 import { Button } from "./ui/button";
 import { Copy, Download } from "lucide-react";
-import { useState } from "react";
+import React, { useState } from "react";
 import { TokenStandard } from "@/types/token";
 
 interface ContractPreviewProps {
